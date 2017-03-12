@@ -22,10 +22,11 @@ type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
 	Http
+	Request *http.Request
 }
 
-func NewAppengineClient(apiKey string) *AppengineClient {
-	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl}
+func NewAppengineClient(apiKey string, r *http.Request) *AppengineClient {
+	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Request: r}
 }
 
 func (c *AppengineClient) Get(endpoint string, params map[string]string) []byte {
@@ -71,7 +72,7 @@ func (c *AppengineClient) parseBody(resp *http.Response) []byte {
 }
 
 func (c *AppengineClient) execute(method, endpoint string, params map[string]string) []byte {
-	ctx := appengine.NewContext(r)
+	ctx := appengine.NewContext(c.Request)
 	AppengineClient := urlfetch.AppengineClient(ctx)
 	req, requestErr = http.NewRequest(method, c.buildUrl(c.BaseUrl, endpoint, params), nil)
 
