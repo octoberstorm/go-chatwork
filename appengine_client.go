@@ -19,7 +19,7 @@ type AppengineClient struct {
 }
 
 func NewAppengineClient(apiKey string, r *http.Request) *AppengineClient {
-	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Request: r}
+	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Request: &r}
 }
 
 func (c *AppengineClient) Get(endpoint string, params map[string]string) []byte {
