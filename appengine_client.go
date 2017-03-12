@@ -11,13 +11,6 @@ import (
 	"strings"
 )
 
-type Http interface {
-	Get()
-	Post()
-	Put()
-	Delete()
-}
-
 type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
@@ -72,14 +65,14 @@ func (c *AppengineClient) parseBody(resp *http.Response) []byte {
 }
 
 func (c *AppengineClient) execute(method, endpoint string, params map[string]string) []byte {
-	ctx := appengine.NewContext(c.Request)
-	AppengineClient := urlfetch.AppengineClient(ctx)
-	req, requestErr = http.NewRequest(method, c.buildUrl(c.BaseUrl, endpoint, params), nil)
-
 	var (
 		req        *http.Request
 		requestErr error
 	)
+
+	ctx := appengine.NewContext(c.Request)
+	AppengineClient := urlfetch.Client(ctx)
+	req, requestErr = http.NewRequest(method, c.buildUrl(c.BaseUrl, endpoint, params), nil)
 
 	if method != "GET" {
 		req, requestErr = http.NewRequest(method, c.BaseUrl+endpoint, bytes.NewBufferString(c.buildBody(params).Encode()))
