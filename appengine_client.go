@@ -4,7 +4,6 @@ import (
 	"appengine"
 	"appengine/urlfetch"
 	"bytes"
-	"golang.org/x/net/context"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,10 +15,10 @@ type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
 	Http
-	Ctx context.Context
+	Ctx appengine.Context
 }
 
-func NewAppengineClient(apiKey string, ctx context.Context) *AppengineClient {
+func NewAppengineClient(apiKey string, ctx appengine.Context) *AppengineClient {
 	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Ctx: ctx}
 }
 
