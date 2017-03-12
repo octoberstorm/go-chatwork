@@ -15,11 +15,11 @@ type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
 	Http
-	Request http.Request
+	Ctx appengine.Context
 }
 
-func NewAppengineClient(apiKey string, r *http.Request) *AppengineClient {
-	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Request: &r}
+func NewAppengineClient(apiKey string, ctx appengine.Context) *AppengineClient {
+	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Ctx: ctx}
 }
 
 func (c *AppengineClient) Get(endpoint string, params map[string]string) []byte {
@@ -70,8 +70,7 @@ func (c *AppengineClient) execute(method, endpoint string, params map[string]str
 		requestErr error
 	)
 
-	ctx := appengine.NewContext(c.Request)
-	client := urlfetch.Client(ctx)
+	client := urlfetch.Client(c.Ctx)
 	req, requestErr = http.NewRequest(method, c.buildUrl(c.BaseUrl, endpoint, params), nil)
 
 	if method != "GET" {
