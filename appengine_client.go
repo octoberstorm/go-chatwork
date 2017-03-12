@@ -71,7 +71,7 @@ func (c *AppengineClient) execute(method, endpoint string, params map[string]str
 	)
 
 	ctx := appengine.NewContext(c.Request)
-	AppengineClient := urlfetch.Client(ctx)
+	client := urlfetch.Client(ctx)
 	req, requestErr = http.NewRequest(method, c.buildUrl(c.BaseUrl, endpoint, params), nil)
 
 	if method != "GET" {
@@ -86,7 +86,7 @@ func (c *AppengineClient) execute(method, endpoint string, params map[string]str
 
 	req.Header.Add("X-ChatWorkToken", c.ApiKey)
 
-	resp, err := AppengineClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
 		return []byte(``)
