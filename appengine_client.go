@@ -1,6 +1,8 @@
 package gochatwork
 
 import (
+	"appengine"
+	"appengine/urlfetch"
 	"bytes"
 	"io/ioutil"
 	"log"
@@ -16,33 +18,33 @@ type Http interface {
 	Delete()
 }
 
-type Client struct {
+type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
 	Http
 }
 
-func NewClient(apiKey string) *Client {
-	return &Client{ApiKey: apiKey, BaseUrl: BaseUrl}
+func NewAppengineClient(apiKey string) *AppengineClient {
+	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl}
 }
 
-func (c *Client) Get(endpoint string, params map[string]string) []byte {
+func (c *AppengineClient) Get(endpoint string, params map[string]string) []byte {
 	return c.execute("GET", endpoint, params)
 }
 
-func (c *Client) Post(endpoint string, params map[string]string) []byte {
+func (c *AppengineClient) Post(endpoint string, params map[string]string) []byte {
 	return c.execute("POST", endpoint, params)
 }
 
-func (c *Client) Put(endpoint string, params map[string]string) []byte {
+func (c *AppengineClient) Put(endpoint string, params map[string]string) []byte {
 	return c.execute("PUT", endpoint, params)
 }
 
-func (c *Client) Delete(endpoint string, params map[string]string) []byte {
+func (c *AppengineClient) Delete(endpoint string, params map[string]string) []byte {
 	return c.execute("DELETE", endpoint, params)
 }
 
-func (c *Client) buildUrl(baseUrl, endpoint string, params map[string]string) string {
+func (c *AppengineClient) buildUrl(baseUrl, endpoint string, params map[string]string) string {
 	query := make([]string, len(params))
 	for k := range params {
 		query = append(query, k+"="+params[k])
@@ -50,7 +52,7 @@ func (c *Client) buildUrl(baseUrl, endpoint string, params map[string]string) st
 	return baseUrl + endpoint + "?" + strings.Join(query, "&")
 }
 
-func (c *Client) buildBody(params map[string]string) url.Values {
+func (c *AppengineClient) buildBody(params map[string]string) url.Values {
 	body := url.Values{}
 	for k := range params {
 		body.Add(k, params[k])
@@ -58,7 +60,7 @@ func (c *Client) buildBody(params map[string]string) url.Values {
 	return body
 }
 
-func (c *Client) parseBody(resp *http.Response) []byte {
+func (c *AppengineClient) parseBody(resp *http.Response) []byte {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -68,8 +70,10 @@ func (c *Client) parseBody(resp *http.Response) []byte {
 	return body
 }
 
-func (c *Client) execute(method, endpoint string, params map[string]string) []byte {
-	httpClient := &http.Client{}
+func (c *AppengineClient) execute(method, endpoint string, params map[string]string) []byte {
+	ctx := appengine.NewContext(r)
+	AppengineClient := urlfetch.AppengineClient(ctx)
+	req, requestErr = http.NewRequest(method, c.buildUrl(c.BaseUrl, endpoint, params), nil)
 
 	var (
 		req        *http.Request
@@ -88,7 +92,7 @@ func (c *Client) execute(method, endpoint string, params map[string]string) []by
 
 	req.Header.Add("X-ChatWorkToken", c.ApiKey)
 
-	resp, err := httpClient.Do(req)
+	resp, err := AppengineClient.Do(req)
 	if err != nil {
 		log.Println(err)
 		return []byte(``)
