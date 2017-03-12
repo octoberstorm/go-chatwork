@@ -15,7 +15,7 @@ type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
 	Http
-	Request *http.Request
+	Request http.Request
 }
 
 func NewAppengineClient(apiKey string, r *http.Request) *AppengineClient {
