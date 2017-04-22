@@ -1,9 +1,9 @@
 package gochatwork
 
 import (
-	"appengine"
-	"appengine/urlfetch"
 	"bytes"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"log"
 	"net/http"
