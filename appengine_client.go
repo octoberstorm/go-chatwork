@@ -2,7 +2,8 @@ package gochatwork
 
 import (
 	"bytes"
-	"google.golang.org/appengine"
+	"golang.org/x/net/context"
+	// "google.golang.org/appengine"
 	"google.golang.org/appengine/urlfetch"
 	"io/ioutil"
 	"log"
@@ -15,10 +16,11 @@ type AppengineClient struct {
 	ApiKey  string
 	BaseUrl string
 	Http
-	Ctx appengine.Context
+	// Ctx appengine.Context
+	Ctx context.Context
 }
 
-func NewAppengineClient(apiKey string, ctx appengine.Context) *AppengineClient {
+func NewAppengineClient(apiKey string, ctx context.Context) *AppengineClient {
 	return &AppengineClient{ApiKey: apiKey, BaseUrl: BaseUrl, Ctx: ctx}
 }
 
